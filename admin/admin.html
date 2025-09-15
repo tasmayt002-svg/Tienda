@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Admin - MiCelio</title>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #34495e;
+      --accent: #1abc9c;
+      --danger: #e74c3c;
+      --info: #3498db;
+      --light: #ecf0f1;
+      --dark: #2d3436;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2 {
+      color: var(--primary);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    form input, form textarea {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    form button {
+      width: fit-content;
+      padding: 0.6rem 1.2rem;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #16a085;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    thead {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .btn {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: var(--info);
+    }
+
+    .delete-btn {
+      background-color: var(--danger);
+    }
+
+    .edit-btn:hover {
+      background-color: #2980b9;
+    }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 1rem;
+      }
+
+      form input, form textarea {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panel de Administración - MiCelio</h1>
+  </header>
+
+  <main>
+    <h2>Agregar Producto</h2>
+    <form id="productoForm" enctype="multipart/form-data">
+      <input type="text" name="nombre" placeholder="Nombre del producto" required>
+      <textarea name="descripcion" placeholder="Descripción" required></textarea>
+      <input type="number" step="0.01" name="precio" placeholder="Precio" required>
+      <input type="file" name="imagen" accept="image/*" required>
+      <input type="text" name="categoria" placeholder="Categoría" required>
+      <input type="number" name="stock" placeholder="Stock" required>
+      <button type="submit">Guardar Producto</button>
+    </form>
+
+    <h2>Productos Disponibles</h2>
+    <table id="productosTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Productos aquí -->
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    let editando = false;
+    let productoEditandoId = null;
+    const form = document.getElementById('productoForm');
+    const tablaBody = document.querySelector('#productosTable tbody');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      let url = '../backend/add_product.php';
+      let mensaje = 'Producto agregado correctamente';
+
+      if (editando) {
+        formData.append('id', productoEditandoId);
+        url = '../backend/update_product.php';
+        mensaje = 'Producto actualizado correctamente';
+      }
+
+      fetch(url, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert(mensaje);
+          form.reset();
+          cargarProductos();
+          editando = false;
+          productoEditandoId = null;
+          form.querySelector("button[type=submit]").textContent = "Guardar Producto";
+        } else {
+          alert('Error: ' + res.error);
+        }
+      });
+    });
+
+
+    function cargarProductos() {
+      fetch('./../backend/get_productos.php')
+        .then(res => res.json())
+        .then(productos => {
+          tablaBody.innerHTML = '';
+
+          productos.forEach(p => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${p.id}</td>
+              <td>${p.nombre}</td>
+              <td>$${parseFloat(p.precio).toLocaleString('es-CO')}</td>
+              <td>${p.stock}</td>
+              <td>
+                <button class="btn delete-btn" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                <button class="btn edit-btn" onclick="editarProducto(${p.id})">Editar</button>
+              </td>
+            `;
+            tablaBody.appendChild(row);
+          });
+        });
+    }
+
+    function eliminarProducto(id) {
+      if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+        fetch(`../backend/delete_product.php?id=${id}`)
+          .then(res => res.json())
+          .then(res => {
+            if (res.success) {
+              alert('Producto eliminado correctamente');
+              cargarProductos();
+            } else {
+              alert('Error: ' + res.error);
+            }
+          });
+      }
+    }
+
+    function editarProducto(id) {
+      fetch(`../backend/get_product_by_id.php?id=${id}`)
+        .then(res => res.json())
+        .then(p => {
+          // Llenar el formulario
+          form.nombre.value = p.nombre;
+          form.descripcion.value = p.descripcion;
+          form.precio.value = p.precio;
+          form.categoria.value = p.categoria;
+          form.stock.value = p.stock;
+
+          // Imagen no se puede prellenar por seguridad
+          alert("Nota: La imagen no se puede previsualizar. Puedes dejarla igual o subir una nueva.");
+
+          productoEditandoId = id;
+          editando = true;
+
+          form.querySelector("button[type=submit]").textContent = "Actualizar Producto";
+        });
+    }
+
+
+    cargarProductos();
+  </script>
+</body>
+</html>

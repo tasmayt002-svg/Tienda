@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda de Hongos - MiCelio</title>
+  <link rel="stylesheet" href="css/styles.css"> <!-- Global -->
+  <link rel="stylesheet" href="css/shop.css">   <!-- Solo index -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <!-- Header -->
+  <header>
+    <h1>MiCelio</h1>
+    <form class="search-box" role="search" action="search.html" method="GET">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
+      </svg>
+      <input type="text" name="q" placeholder="Buscar..." aria-label="Buscar productos">
+    </form>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="shop.html" class="active">Tienda</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contacto</a>
+      <button id="openCartBtn" aria-label="Abrir carrito" style="position: fixed; top: 1rem; right: 1rem; z-index: 1001; background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+        🛒 <span class="cart-count">0</span>
+      </button>
+
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Hongos que inspiran</h1>
+      <p>Productos naturales, cultivos líquidos y extractos premium para una vida más saludable y consciente.</p>
+      <a href="#tienda" class="btn-primary">Explorar tienda</a>
+    </div>
+  </section>
+
+  <!-- Productos destacados -->
+  <main class="shop-container">
+
+    <!-- Sección de productos destacados -->
+    <section id="productosDestacados">
+      <h2>🌟 Productos destacados</h2>
+      <div class="product-grid" id="destacadosContainer">
+        <!-- Aquí se cargarán los productos destacados -->
+      </div>
+    </section>
+
+    <!-- Sección de otros productos -->
+    <section id="otrosProductos">
+      <h2>🛍️ Todos los productos</h2>
+      <div class="product-grid" id="otrosContainer">
+        <!-- Aquí se cargarán los productos no destacados -->
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- Sección de confianza -->
+  <section class="trust">
+    <h3>¿Por qué elegirnos?</h3>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <h4>Calidad garantizada</h4>
+        <p>Nuestros productos pasan por controles de laboratorio y procesos estériles.</p>
+      </div>
+      <div class="trust-item">
+        <h4>Envíos seguros</h4>
+        <p>Empaques diseñados para mantener la frescura y seguridad del producto.</p>
+      </div>
+      <div class="trust-item">
+        <h4>Sostenibilidad</h4>
+        <p>Promovemos el cultivo responsable y el respeto por el medio ambiente.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Carrito lateral -->
+  <aside id="cartSidebar" aria-label="Carrito de compras">
+    <header>
+      <h2>Carrito (<span class="cart-count">0</span> item)</h2>
+      <button id="closeCartBtn" aria-label="Cerrar carrito" style="font-size: 1.5rem; background:none; border:none; cursor:pointer;">✕</button>
+    </header>
+    <div id="cartItemsContainer"></div>
+    <!-- 🔻 Agrega este botón debajo del contenedor de ítems -->
+    <div style="text-align: center; margin-top: 1rem;">
+      <button onclick="resetCart()" style="background: red; color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; border-radius: 4px;">
+        Vaciar carrito 🗑️
+      </button>
+    </div>
+
+
+    <div class="promo-code">
+      <button style="background:none; border:none; color:blue; cursor:pointer; font-style: italic;">Ingresar código de promoción</button>
+    </div>
+    
+
+    <footer>
+      <div class="cart-total">
+        Total estimado <span id="cartTotalPrice">$0</span>
+      </div>
+      <button onclick="window.location.href='cart.html'" id="checkoutBtn" style="background: blue; color: white; padding: 1rem; border: none; width: 100%; cursor: pointer; font-weight: bold;">Ver carrito</button>
+    </footer>
+  </aside>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2025 MiCelio — Todos los derechos reservados</p>
+      <p>Inspirando el cultivo responsable y sostenible de hongos</p>
+    </div>
+  </footer>
+
+  <script src="js/particula.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/loadProducts.js"></script>
+
+</body>
+</html>

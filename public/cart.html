@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrito de compras</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f7f9fc;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+    }
+
+    #cartContainer {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item img {
+      width: 90px;
+      height: 90px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .cart-info {
+      flex: 1;
+    }
+
+    .cart-info h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      color: #34495e;
+    }
+
+    .cart-info p {
+      margin: 0.2rem 0;
+      color: #555;
+    }
+
+    .remove-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      background: #c0392b;
+    }
+
+    .cart-total {
+      max-width: 800px;
+      margin: 2rem auto 1rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: right;
+      color: #2c3e50;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+      font-style: italic;
+    }
+
+    .clear-cart-btn {
+      display: block;
+      margin: 1rem auto;
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .clear-cart-btn:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tu carrito de compras</h1>
+  <div id="cartContainer"></div>
+  <div class="cart-total" id="cartTotal"></div>
+  <button class="clear-cart-btn" onclick="resetCart()">Vaciar carrito</button>
+
+  <script src="js/cart.js"></script>
+  <script>
+    function renderCart() {
+      const cart = getCart();
+      const container = document.getElementById('cartContainer');
+      const totalDiv = document.getElementById('cartTotal');
+      container.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="empty-message">Tu carrito está vacío.</div>';
+        totalDiv.innerHTML = '';
+        return;
+      }
+
+      cart.forEach(item => {
+        total += item.precio * item.cantidad;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="${item.imagen_url}" alt="${item.nombre}">
+          <div class="cart-info">
+            <h3>${item.nombre}</h3>
+            <p>Cantidad: ${item.cantidad}</p>
+            <p>Precio: $${parseInt(item.precio).toLocaleString('es-CO')}</p>
+          </div>
+          <button class="remove-btn" onclick="removeFromCart(${item.id})">Eliminar</button>
+        `;
+        container.appendChild(div);
+      });
+
+      totalDiv.innerHTML = `Total: $${total.toLocaleString('es-CO')} COP`;
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>
